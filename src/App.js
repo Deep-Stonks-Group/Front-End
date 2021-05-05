@@ -91,7 +91,7 @@ function App() {
            </Route>
          </Switch>
         </Content>
-        <Footer style={{ textAlign: 'center' }}>Deep Stonks ©2021 Created by Chris Young</Footer>
+        <Footer style={{ textAlign: 'center' }}>Deep Stonks ©2021 Created by </Footer>
       </Layout>
     </Layout>
   );
