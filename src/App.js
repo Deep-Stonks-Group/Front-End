@@ -1,4 +1,4 @@
-import { useState, useEffect} from 'react';
+import { useState, useEffect, useContext, createContext} from 'react';
 import { Route, Switch, useHistory, withRouter, useLocation } from 'react-router-dom';
 import { Layout, Menu } from 'antd';
 
@@ -17,6 +17,11 @@ import {
 import './App.css';
 import Home from './components/Home';
 import Reports from './components/Reports';
+import NoRoute from './components/NoRoute';
+import Link from './components/Link';
+import { CurrentPageTitleContext } from "./components/contexts/CurrentPageTitleContext";
+
+
 
 
 const { Header, Content, Footer, Sider } = Layout;
@@ -26,8 +31,7 @@ function App() {
   const history = useHistory();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
-  const [currentPage, setCurrentPage] = useState('');
-
+  const [currentTitle, setCurrentTitle] = useState('')
 
   useEffect(() => {
     if(isMobile){
@@ -35,12 +39,12 @@ function App() {
     }
   }, []);
 
+
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
   };
 
   const handleNav = (path, label) => {
-    setCurrentPage(label);
     history.push('/' + path);
   };
 
@@ -50,7 +54,7 @@ function App() {
       <Sider collapsible collapsed={collapsed} onCollapse={toggleCollapsed}>
         <div className="logo">Deep Stonks</div>
         <Menu theme="dark" defaultSelectedKeys={['/']} selectedKeys={[location.pathname]} mode="inline">
-          <Menu.Item key="/home" icon={<PieChartOutlined />} onClick={() => {handleNav('home', 'Home')}}>
+          <Menu.Item key="/" icon={<PieChartOutlined />} onClick={() => {handleNav('', 'Home')}}>
             Home
           </Menu.Item>
           <Menu.Item key="/reports" icon={<DesktopOutlined />} onClick={() => {handleNav('reports', 'Reports')}}>
@@ -70,22 +74,27 @@ function App() {
           </Menu.Item>
         </Menu>
       </Sider>
-      <Layout className="site-layout">
-        <Header className="site-layout-background" id="app-header" >
-          {currentPage}
-        </Header>
-        <Content style={{ margin: '16px 16px' }}>
-          <Switch>
-            <Route path="/home">
-              <Home />
-            </Route>
-            <Route path="/reports">
-              <Reports />
-            </Route>
-          </Switch>  
-        </Content>
-        <Footer style={{ textAlign: 'center' }}>Deep Stonks ©2021 Created by </Footer>
-      </Layout>
+      <CurrentPageTitleContext.Provider value={{currentTitle, setCurrentTitle}}>
+        <Layout className="site-layout">
+          <Header className="site-layout-background" id="app-header" >
+            {currentTitle ? currentTitle : 'Page Not Found'}
+          </Header>
+          <Content style={{ margin: '16px 16px' }}>
+            <Switch>
+              <Link exact title="Home" path="/">
+                <Home />
+              </Link>
+              <Link title="Reports" path="/reports">
+                <Reports />
+              </Link>
+              <Link>
+                <NoRoute />
+              </Link>
+            </Switch>  
+          </Content>
+          <Footer style={{ textAlign: 'center' }}>Deep Stonks ©2021 Created by </Footer>
+        </Layout>
+      </CurrentPageTitleContext.Provider>
     </Layout>
   );
 }
