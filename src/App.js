@@ -1,7 +1,7 @@
 import { useState, useEffect} from 'react';
-import { Route, Switch, useHistory, withRouter } from 'react-router-dom';
+import { Route, Switch, useHistory, withRouter, useLocation } from 'react-router-dom';
+import { Layout, Menu } from 'antd';
 
-import { Layout, Menu, Breadcrumb } from 'antd';
 import {
   DesktopOutlined,
   PieChartOutlined,
@@ -11,22 +11,20 @@ import {
 } from '@ant-design/icons';
 
 import {
-  isBrowser,
   isMobile
 } from "react-device-detect";
 
 import './App.css';
-
-
 import Home from './components/Home';
-import Page1 from './components/Page1';
+import Reports from './components/Reports';
+
 
 const { Header, Content, Footer, Sider } = Layout;
 const { SubMenu } = Menu;
 
-
 function App() {
   const history = useHistory();
+  const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
   const [currentPage, setCurrentPage] = useState('');
 
@@ -35,7 +33,6 @@ function App() {
     if(isMobile){
       setCollapsed(true);
     }
-    handleNav('home', 'Home');
   }, []);
 
   const toggleCollapsed = () => {
@@ -52,12 +49,12 @@ function App() {
     <Layout style={{ minHeight: '100vh' }}>
       <Sider collapsible collapsed={collapsed} onCollapse={toggleCollapsed}>
         <div className="logo">Deep Stonks</div>
-        <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
-          <Menu.Item key="1" icon={<PieChartOutlined />} onClick={() => {handleNav('home', 'Home')}}>
-            Option 1
+        <Menu theme="dark" defaultSelectedKeys={['/']} selectedKeys={[location.pathname]} mode="inline">
+          <Menu.Item key="/home" icon={<PieChartOutlined />} onClick={() => {handleNav('home', 'Home')}}>
+            Home
           </Menu.Item>
-          <Menu.Item key="2" icon={<DesktopOutlined />} onClick={() => {handleNav('page1', 'Page 1')}}>
-            Option 2
+          <Menu.Item key="/reports" icon={<DesktopOutlined />} onClick={() => {handleNav('reports', 'Reports')}}>
+            Reports
           </Menu.Item>
           <SubMenu key="sub1" icon={<UserOutlined />} title="User">
             <Menu.Item key="3">Tom</Menu.Item>
@@ -78,18 +75,14 @@ function App() {
           {currentPage}
         </Header>
         <Content style={{ margin: '16px 16px' }}>
-          {/* <Breadcrumb style={{ margin: '16px 0' }}>
-            <Breadcrumb.Item>User</Breadcrumb.Item>
-            <Breadcrumb.Item>Bill</Breadcrumb.Item>
-          </Breadcrumb> */}
           <Switch>
             <Route path="/home">
-             <Home />
-           </Route>
-           <Route path="/page1">
-             <Page1 />
-           </Route>
-         </Switch>
+              <Home />
+            </Route>
+            <Route path="/reports">
+              <Reports />
+            </Route>
+          </Switch>  
         </Content>
         <Footer style={{ textAlign: 'center' }}>Deep Stonks ©2021 Created by </Footer>
       </Layout>
