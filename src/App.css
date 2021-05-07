@@ -1,8 +1,12 @@
 .logo{
-  color:#fff;
-  display: flex;
-  justify-content: center;
+  margin: 9px;
 }
+
+.logo-open{
+  width: 100%;
+  height: 42px;
+}
+
 
 #app-header{
   color: white;

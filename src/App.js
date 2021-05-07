@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext, createContext} from 'react';
 import { Route, Switch, useHistory, withRouter, useLocation } from 'react-router-dom';
-import { Layout, Menu } from 'antd';
+import { Layout, Menu, Image } from 'antd';
+import logo from './assets/logo.jpg';
 
 import {
   DesktopOutlined,
@@ -31,7 +32,8 @@ function App() {
   const history = useHistory();
   const location = useLocation();
   const [collapsed, setCollapsed] = useState(false);
-  const [currentTitle, setCurrentTitle] = useState('')
+  const [currentTitle, setCurrentTitle] = useState('');
+
 
   useEffect(() => {
     if(isMobile){
@@ -44,7 +46,17 @@ function App() {
     setCollapsed(!collapsed);
   };
 
-  const handleNav = (path, label) => {
+  const getSubmenuKey = (location) => {
+    let arr = location.split('/');
+    return arr[1];
+  }
+
+  const getMenuItemKey = (location) => {
+    let arr = location.split('/');
+    return arr[2];
+  }
+
+  const handleNav = (path) => {
     history.push('/' + path);
   };
 
@@ -52,26 +64,21 @@ function App() {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       <Sider collapsible collapsed={collapsed} onCollapse={toggleCollapsed}>
-        <div className="logo">Deep Stonks</div>
-        <Menu theme="dark" defaultSelectedKeys={['/']} selectedKeys={[location.pathname]} mode="inline">
-          <Menu.Item key="/" icon={<PieChartOutlined />} onClick={() => {handleNav('', 'Home')}}>
+        <div className="logo">
+          <img className="logo-open" src={logo} /> 
+        </div>
+        <Menu theme="dark" defaultSelectedKeys={['/']} selectedKeys={[getMenuItemKey(location.pathname) || '/']} defaultOpenKeys={[getSubmenuKey(location.pathname)]} mode="inline">
+          <Menu.Item key="/" icon={<DesktopOutlined />} onClick={() => {handleNav('')}}>
             Home
           </Menu.Item>
-          <Menu.Item key="/reports" icon={<DesktopOutlined />} onClick={() => {handleNav('reports', 'Reports')}}>
-            Reports
-          </Menu.Item>
-          <SubMenu key="sub1" icon={<UserOutlined />} title="User">
-            <Menu.Item key="3">Tom</Menu.Item>
-            <Menu.Item key="4">Bill</Menu.Item>
-            <Menu.Item key="5">Alex</Menu.Item>
+          <SubMenu key="reports" icon={<PieChartOutlined />} title="Reports">
+            <Menu.Item key="report1" icon={<PieChartOutlined />} onClick={() => {handleNav('reports/report1')}}>
+              Report 1
+            </Menu.Item>
+            <Menu.Item key="report2" icon={<PieChartOutlined />} onClick={() => {handleNav('reports/report2')}}>
+              Report 2
+            </Menu.Item>
           </SubMenu>
-          <SubMenu key="sub2" icon={<TeamOutlined />} title="Team">
-            <Menu.Item key="6">Team 1</Menu.Item>
-            <Menu.Item key="8">Team 2</Menu.Item>
-          </SubMenu>
-          <Menu.Item key="9" icon={<FileOutlined />}>
-            Files
-          </Menu.Item>
         </Menu>
       </Sider>
       <CurrentPageTitleContext.Provider value={{currentTitle, setCurrentTitle}}>
@@ -84,13 +91,13 @@ function App() {
               <Link exact title="Home" path="/">
                 <Home />
               </Link>
-              <Link title="Reports" path="/reports">
+              <Link title="Reports" path="/reports/:reportId">
                 <Reports />
               </Link>
               <Link>
                 <NoRoute />
               </Link>
-            </Switch>  
+            </Switch>
           </Content>
           <Footer style={{ textAlign: 'center' }}>Deep Stonks ©2021 Created by </Footer>
         </Layout>
